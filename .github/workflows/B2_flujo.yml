@@ -15,13 +15,13 @@ jobs:
         with:
           fetch-depth: 0
      
-      - name: Descargar archivos
-        uses: backblaze-labs/b2-action@v1
-        with:
-            action: 'download'
+      #- name: Descargar archivos
+        #uses: backblaze-labs/b2-action@v1
+        #with:
+           # action: 'download'
       # Runs a single command using the runners shell
-            B2_BUCKET: ${{ secrets.B2_BUCKET_NAME }}
-            B2_APPKEY_ID: ${{ secrets.B2_APPKEY_ID }}
-            B2_APPKEY: ${{ secrets.B2_APPKEY }}
-            source: './build/archivosdescargados.zip'
-            destination: 'releases/archivosdescargados2.zip'
+           # B2_BUCKET: ${{ secrets.B2_BUCKET_NAME }}
+           # B2_APPKEY_ID: ${{ secrets.B2_APPKEY_ID }}
+           # B2_APPKEY: ${{ secrets.B2_APPKEY }}
+            #source: './build/archivosdescargados.zip'
+            #destination: 'releases/archivosdescargados2.zip'
