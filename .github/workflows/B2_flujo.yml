@@ -24,23 +24,23 @@ jobs:
       - name: Procesar y comprimir iconos
         uses: actions/setup-node@v4
         with:
-           node-node-version: '24'
-    run: |
-         node -e "
-         const fs = require('fs');
-         const path = require('path');
+            node-node-version: '24'
+    runs: |
+            node -e "
+            const fs = require('fs');
+            const path = require('path');
 
-         const origenDir = './src/icons';
-         const destinoDir = './optimizados/icons';
+            const origenDir = './src/icons';
+            const destinoDir = './optimizados/icons';
 
-          // Asegurar que la carpeta de destino existe
-         if (!fs.existsSync(destinoDir)){
+             // Asegurar que la carpeta de destino existe
+            if (!fs.existsSync(destinoDir)){
             fs.mkdirSync(destinoDir, { recursive: true });
-         }
+            }
 
-         // Leer y procesar archivos
-         fs.readdirSync(origenDir).forEach(file => {
-            if (path.extname(file).toLowerCase() === '.svg') {
+            // Leer y procesar archivos
+            fs.readdirSync(origenDir).forEach(file => {
+             if (path.extname(file).toLowerCase() === '.svg') {
                 const rutaOrigen = path.join(origenDir, file);
                 const rutaDestino = path.join(destinoDir, file);
                 
@@ -50,7 +50,7 @@ jobs:
                 // y asegurar que tenga la propiedad fill='currentColor' para cambiar de color con CSS
                 let optimizado = svgContent
              // svgo -f src/icons
-          svgo -f svgContent --config='{
+            svgo -f svgContent --config='{
             "plugins": [
               "preset-default",
               {
@@ -63,13 +63,13 @@ jobs:
                   ]
                 }
               }
-            ]
-          }'
-                
+             ]
+            }'
+
                 fs.writeFileSync(rutaDestino, optimizado);
                 console.log('Procesado con éxito: ' + file);
             }
-         });"
+            });"
 
       # 4. Verificar si hubo cambios y hacer commit de vuelta de forma nativa
       - name: Guardar cambios optimizados
