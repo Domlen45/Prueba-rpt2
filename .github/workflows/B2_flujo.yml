@@ -22,8 +22,10 @@ jobs:
 
       # 3. Optimizar en lote todos los archivos SVG de la carpeta indicada
       - name: Procesar y comprimir iconos
-        run: |
-         
+        uses: actions/setup-node@v4
+        with:
+           node-node-version: '24'
+    run: |
          node -e "
          const fs = require('fs');
          const path = require('path');
