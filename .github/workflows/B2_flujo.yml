@@ -25,22 +25,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
            node-node-version: '24'
-    run: |
-         node -e "
-         const fs = require('fs');
-         const path = require('path');
+        run: |
+               node -e "
+               const fs = require('fs');
+               const path = require('path');
 
-         const origenDir = './src/icons';
-         const destinoDir = './optimizados/icons';
+               const origenDir = './src/icons';
+               const destinoDir = './optimizados/icons';
 
-          // Asegurar que la carpeta de destino existe
-         if (!fs.existsSync(destinoDir)){
-            fs.mkdirSync(destinoDir, { recursive: true });
-         }
+               // Asegurar que la carpeta de destino existe
+               if (!fs.existsSync(destinoDir)){
+               fs.mkdirSync(destinoDir, { recursive: true });
+               }
 
-         // Leer y procesar archivos
-         fs.readdirSync(origenDir).forEach(file => {
-            if (path.extname(file).toLowerCase() === '.svg') {
+               // Leer y procesar archivos
+               fs.readdirSync(origenDir).forEach(file => {
+               if (path.extname(file).toLowerCase() === '.svg') {
                 const rutaOrigen = path.join(origenDir, file);
                 const rutaDestino = path.join(destinoDir, file);
                 
@@ -49,11 +49,11 @@ jobs:
                 // Ejemplo de optimización nativa básica: Remover espacios en blanco innecesarios
                 // y asegurar que tenga la propiedad fill='currentColor' para cambiar de color con CSS
                 let optimizado = svgContent
-             // svgo -f src/icons
-          svgo -f svgContent --config='{
-            "plugins": [
-              "preset-default",
-              {
+               // svgo -f src/icons
+               svgo -f svgContent --config='{
+                "plugins": [
+                "preset-default",
+                 {
                 "name": "addAttributesToSVGElement",
                 "params": {
                   "attributes": [
@@ -62,14 +62,14 @@ jobs:
                     {"viewBox": "0 0 24 24"}
                   ]
                 }
-              }
-            ]
-          }'
+                }
+               ]
+               }'
                 
                 fs.writeFileSync(rutaDestino, optimizado);
                 console.log('Procesado con éxito: ' + file);
-            }
-         });"
+               }
+               });"
 
       # 4. Verificar si hubo cambios y hacer commit de vuelta de forma nativa
       - name: Guardar cambios optimizados
