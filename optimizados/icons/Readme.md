@@ -4,5 +4,5 @@
 # Versión: v 1.0.0
 # Fecha finalización: 2026/10/23 🕡6:30:00 A.M
 # Mis iconos SVG optimizados
-# Configurados al tamaño necesario para su uso With: 48px y Height: 48px
+# Configurados al tamaño necesario para su uso Width: 48px y Height: 48px
 # ====================================================================== #
