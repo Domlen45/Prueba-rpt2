@@ -1,27 +1,84 @@
-name: Sincronizar
+name: Modificar Iconos
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    paths:
+      - 'src/icons/**.svg' # Ajusta esta ruta a la carpeta donde guardas tus iconos 
+                           # "RUTA DE ARCHIVOS SVG de 24px X 24px"
+  workflow_dispatch: # Te permite ejecutar el proceso manualmente desde la web si lo deseas
 
 jobs:
-   deploy:
-     runs-on: ubuntu-latest
-     steps:
-      - name: Descargar codigo
+  optimize:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Clonar el repositorio usando la acción oficial y segura de GitHub
+      - name: Checkout del código
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-     
-      #- name: Descargar archivos
-        #uses: backblaze-labs/b2-action@v1
-        #with:
-           # action: 'download'
-      # Runs a single command using the runners shell
-           # B2_BUCKET: ${{ secrets.B2_BUCKET_NAME }}
-           # B2_APPKEY_ID: ${{ secrets.B2_APPKEY_ID }}
-           # B2_APPKEY: ${{ secrets.B2_APPKEY }}
-            #source: './build/archivosdescargados.zip'
-            #destination: 'releases/archivosdescargados2.zip'
+
+      # 2. Instalar SVGO globalmente en la máquina virtual, por eso "runs-on: ubuntu-latest"
+      - name: Instalar optimizador de SVG
+        run: npm install -g svgo
+
+      # 3. Optimizar en lote todos los archivos SVG de la carpeta indicada
+      - name: Procesar y comprimir iconos
+        run: |
+         
+         node -e "
+         const fs = require('fs');
+         const path = require('path');
+
+         const origenDir = './src/icons';
+         const destinoDir = './optimizados/icons';
+
+          // Asegurar que la carpeta de destino existe
+         if (!fs.existsSync(destinoDir)){
+            fs.mkdirSync(destinoDir, { recursive: true });
+         }
+
+         // Leer y procesar archivos
+         fs.readdirSync(origenDir).forEach(file => {
+            if (path.extname(file).toLowerCase() === '.svg') {
+                const rutaOrigen = path.join(origenDir, file);
+                const rutaDestino = path.join(destinoDir, file);
+                
+                let svgContent = fs.readFileSync(rutaOrigen, 'utf8');
+                
+                // Ejemplo de optimización nativa básica: Remover espacios en blanco innecesarios
+                // y asegurar que tenga la propiedad fill='currentColor' para cambiar de color con CSS
+                let optimizado = svgContent
+             // svgo -f src/icons
+          svgo -f svgContent --config='{
+            "plugins": [
+              "preset-default",
+              {
+                "name": "addAttributesToSVGElement",
+                "params": {
+                  "attributes": [
+                    {"width": "48"}, //Cambiando el ancho a 48 pixeles
+                    {"height": "48"}, //Cambiando el largo a 48 pixeles
+                    {"viewBox": "0 0 24 24"}
+                  ]
+                }
+              }
+            ]
+          }'
+                
+                fs.writeFileSync(rutaDestino, optimizado);
+                console.log('Procesado con éxito: ' + file);
+            }
+         });"
+
+      # 4. Verificar si hubo cambios y hacer commit de vuelta de forma nativa
+      - name: Guardar cambios optimizados
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          if [ -n "$(git status --porcelain)" ]; then
+            git add optimizados/icons/*.svg
+            git commit -m "chore: iconos web optimizados automáticamente con SVGO"
+            git push
+          else
+            echo "No se encontraron optimizaciones pendientes en los iconos."
+          fi
